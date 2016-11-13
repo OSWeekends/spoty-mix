@@ -25,6 +25,9 @@ h1 {
     display: inline-block;
     margin-top: 32px;
 }
+	.login-btn:hover {
+		text-decoration: none;
+	}
 
 /* PAGE TITLE */
 
