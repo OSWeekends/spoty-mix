@@ -119,18 +119,21 @@ app.get('/api/playlists', function(req, res){
 
 // PUT /api/playlists/:playlistId
 //   Add the playlist of the new temporal list
-app.post('/api/playlists/:songList', function(req, res){
-
-  spotifyApi.createPlaylist(req.user.id, '🍻 Spoty Mix')
+app.post('/api/playlists', function(req, res){
+  if (!req.user && !!req.params.playlists && req.params.playlists.length>0){
+    res.status(401).json({err:'Unauthorized', data: ''});
+  }else {
+    spotifyApi.setAccessToken(tokens[req.user.id]);
+    spotifyApi.createPlaylist(req.user.id, '🍻 Spoty Mix')
     .then(function(data) {
       console.log('Created playlist!');
+      spotifyApi.setAccessToken(tokens[req.user.id]);
     }, function(err) {
       console.log('Something went wrong! -NIVEL1', err);
     })
+  }
 
-
-
-
+  
 
 /*
   // Add tracks to a playlist
@@ -146,7 +149,6 @@ app.post('/api/playlists/:songList', function(req, res){
 // DELETE /api/playlists/:playlistId
 //   remove the playlist of the temporal list
 app.delete('/api/playlists/:playlistId', function(req, res){});
-
 
 
 app.get('/auth/spotify',
