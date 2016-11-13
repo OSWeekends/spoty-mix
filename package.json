@@ -48,6 +48,7 @@
     "express-dot-engine": "1.0.7",
     "express-session": "1.4.0",
     "firebase": "3.6.0",
+    "lodash": "^4.16.6",
     "method-override": "2.0.2",
     "passport": "0.3.2",
     "passport-spotify": "0.3.0",

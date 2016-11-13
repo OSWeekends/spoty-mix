@@ -3,6 +3,7 @@ var express = require('express'),
     router = express.Router(),
     firebase = require('firebase'),
     SpotifyWebApi = require('spotify-web-api-node'),
+    _ = require('lodash'),
     config = require('../config');
 
 var spotifyApi = new SpotifyWebApi({
@@ -66,5 +67,27 @@ router.post('/playlists/:songList', function(req, res){
 // DELETE /api/playlists/:playlistId
 //   remove the playlist of the temporal list
 router.delete('/playlists/:playlistId', function(req, res){});
+
+
+function selectRandom(playlists){
+    if (!playlist){
+        return [];
+    }else if (playlist.length == 0){
+        return [];
+    }else {
+        var tracks = [];
+        _.forEach(playlists, function(playlist){
+            tracks = _.concat(tracks, playlist.tracks);
+        });
+
+        var selectedTracks = [];
+        _.times((tracks.length>=100)?100:tracks.length, function(){
+            var rand = _.random(0, tracks.length-1);
+            selectedTracks.push(tracks[rand]);
+            tarcks.splice(rand, 1);
+        });
+        return selectedTracks;
+    }
+}
 
 module.exports = router;
