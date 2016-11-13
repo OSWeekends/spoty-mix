@@ -46,6 +46,24 @@ app.controller('userController', function(){
 });
 
 
+app.controller('playlistController', function($sce){
+    var self = this;
+
+    var array = [
+        '3rgsDhGHZxZ9sB9DQWQfuf',
+        '0Vib1QAMtMaiywa3QSEq40'
+    ];
+    var rand = array[Math.floor(Math.random() * array.length)];
+
+    // $scope.trustSrc = function(src) {
+       self.player = $sce.trustAsResourceUrl('https://embed.spotify.com/?uri=spotify:user:spotify:playlist:' + rand);
+    // }
+
+    // self.player = 'https://embed.spotify.com/?uri=spotify:user:spotify:playlist:' + rand;
+    
+});
+
+
 app.controller('mixController', function(api){
     var self = this;
 
