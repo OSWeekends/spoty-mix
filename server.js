@@ -40,7 +40,13 @@ passport.use(new SpotifyStrategy({
   function(accessToken, refreshToken, profile, done) {
     tokens[profile.id] = accessToken;
     spotifyApi.setAccessToken(accessToken);
+    console.log("accesstoken", accessToken)
     var authorizeURL = spotifyApi.createAuthorizeURL(['playlist-modify', 'user-library-modify', 'playlist-read', 'playlist-modify-public', 'playlist-modify-private'], "me_lo_invento");
+    spotifyApi.authorizationCodeGrant(accessToken).then(function(data){
+      console.log("DATAAAAAA", data)
+    }, function(err){
+      console.log("ERRRRR", err)
+    })
     console.log(authorizeURL);
     process.nextTick(function () {
       return done(null, profile);
@@ -114,24 +120,17 @@ app.get('/api/playlists', function(req, res){
 // PUT /api/playlists/:playlistId
 //   Add the playlist of the new temporal list
 app.post('/api/playlists/:songList', function(req, res){
-  //console.log(req.user)
-  /*
-  var spotifyApi = new SpotifyWebApi({
-    clientId : config.spotify.clientID,
-    clientSecret : config.spotify.clientSecret,
-    redirectUri : 'http://www.localhost.8080/callback'
-  });
-  spotifyApi.setAccessToken(config.spotify.token);
-  */
-  //console.log("token", config.spotify.token)
-  //spotifyApi = app.get("spotify")
-  console.log("HOLAAAAAA");
-  spotifyApi.createPlaylist('kom256', ':beers: Spoty Mix')
-  .then(function(data) {
-    console.log('Created playlist!');
-  }, function(err) {
-    console.log('Something went wrong!', err);
-  });
+
+  spotifyApi.createPlaylist(req.user.id, '🍻 Spoty Mix')
+    .then(function(data) {
+      console.log('Created playlist!');
+    }, function(err) {
+      console.log('Something went wrong! -NIVEL1', err);
+    })
+
+
+
+
 
 /*
   // Add tracks to a playlist
