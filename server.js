@@ -142,7 +142,8 @@ function ensureAuthenticated(req, res, next) {
 
 function writeUserData(id, data) {
   firebase.database().ref('users/' + id ).set(data);
-  
+
+/*
   spotifyApi.getUser(id)
   .then(function(userData) {
     firebase.database().ref('users/' + id + 'userData').set(userData.body);
@@ -150,6 +151,7 @@ function writeUserData(id, data) {
   }, function(err) {
     console.log('Something went wrong!', err);
   });
+*/
   
   spotifyApi.getUserPlaylists(id)
   .then(function(playlists) {
