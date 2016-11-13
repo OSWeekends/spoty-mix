@@ -37,6 +37,7 @@ passport.use(new SpotifyStrategy({
   callbackURL: 'http://localhost:8080/callback'
   },
   function(accessToken, refreshToken, profile, done) {
+    config.spotify.token = accessToken;
     spotifyApi.setAccessToken(accessToken);
     process.nextTick(function () {
       return done(null, profile);
