@@ -95,6 +95,9 @@ app.get('/templates/home', function(req, res){
   res.render('templates/home');
 });
 
+// Routes for api service
+var routesApi = require('./routes/api');
+app.use('/api', routesApi);
 
 // GET /auth/spotify
 //   Use passport.authenticate() as route middleware to authenticate the
