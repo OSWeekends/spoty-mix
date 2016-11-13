@@ -9,6 +9,7 @@ var express = require('express'),
     config = require('./config'),
     engine = require('express-dot-engine'),
     SpotifyWebApi = require('spotify-web-api-node'),
+    _ = require('lodash'),
     Q = require('q');
 
 var tokens = {};
@@ -119,21 +120,32 @@ app.post('/api/playlists', function(req, res){
   if (!req.user && !!req.body.playlists && req.body.playlists.length>0){
     res.status(401).json({err:'Unauthorized', data: ''});
   }else {
+    console.log('Get todas las listas');
     spotifyApi.setAccessToken(tokens[req.user.id]);
     getAllPlaylist(req.user.id).then(function(pls){
-      var playlist = _.find(pls, function(playlist){
-        return playlist.name == '🍻 Spoty Mix';
+      console.log('Hola');
+      console.log('Llego getAllPlaylist', pls);
+      var playlist = _.find(pls, function(pl){
+        console.log('HOLAAAAA');
+        console.log(pl);
+        return pl.name == '🍻 Spoty Mix';
       });
+
+      console.log('Check playlist', playlist);
       if (playlist){
           var playlists = req.body.playlists;
           var tracks = [];
-          _.forEach(playlists, function(playlist){
-            tracks = _.concat(tracks, _.map(playlist.tracks, function(track){
+          _.forEach(playlists, function(pl){
+            tracks = _.concat(tracks, _.map(pl.tracks, function(track){
+              console.log('TRACKSSSSSSS', track);
               return track.uri;
             }))
           });
-          tracks = selectRandom(tracks, 100);
+          console.log('Selecting tracks', tracks);
+          tracks = selectRandom(tracks, 50);
+          console.log('Selected', tracks.length);
           spotifyApi.setAccessToken(tokens[req.user.id]);
+          console.log(req.user.id, playlist.id, tracks);
           spotifyApi.addTracksToPlaylist(req.user.id, playlist.id, tracks)
           .then(function(data) {
             console.log('Added tracks to playlist!');
@@ -155,16 +167,21 @@ app.post('/api/playlists', function(req, res){
                 return track.uri;
               }))
             });
-            tracks = selectRandom(tracks, 100);
+            tracks = selectRandom(tracks, 50);
+            console.log('TRACKS:', tracks.length);
             spotifyApi.setAccessToken(tokens[req.user.id]);
             getAllPlaylist(req.user.id).then(function(pls){
-              var playlist = _.find(pls, function(playlist){
-                return playlist.name == '🍻 Spoty Mix';
+              console.log('listas');
+              console.log('listas', pls.length);
+              var playlist = _.find(pls, function(pl){
+                return pl.name == '🍻 Spoty Mix';
               });
+              console.log('CHECKING:',!!playlist)
               if (playlist){
                 spotifyApi.setAccessToken(tokens[req.user.id]);
-                spotifyApi.addTracksToPlaylist(req.user.id, playlists.id, tracks)
+                spotifyApi.addTracksToPlaylist(req.user.id, playlist.id, tracks)
                   .then(function(data) {
+                    res.json({err:'', data:playlist.id});
                     console.log('Added tracks to playlist!');
                   }, function(err) {
                     console.log('Something went wrong!', err);
@@ -216,6 +233,7 @@ function ensureAuthenticated(req, res, next) {
 }
 
 function selectRandom(playlists, limit){
+  console.log(!playlists, limit, playlists.length);
     if (!playlists){
         return [];
     }else if (playlists.length == 0){
@@ -223,14 +241,16 @@ function selectRandom(playlists, limit){
     }else {
         var tracks = [];
         _.forEach(playlists, function(playlist){
-            tracks = _.concat(tracks, playlist.tracks);
+
+            tracks = _.concat(tracks, playlist);
         });
 
         var selectedTracks = [];
         _.times((tracks.length>=limit)?limit:tracks.length, function(){
             var rand = _.random(0, tracks.length-1);
+            console.log(rand,!!tracks[rand], tracks[rand]);
             selectedTracks.push(tracks[rand]);
-            tarcks.splice(rand, 1);
+            tracks.splice(rand, 1);
         });
         return selectedTracks;
     }
