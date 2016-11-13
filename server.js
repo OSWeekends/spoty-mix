@@ -94,6 +94,7 @@ app.get('/templates/playlist', function(req, res){
 
 app.post('/api/users', function(req, res){});
 
+
 // GET /api/playlists
 //   Get the playlists of user for build the mix
 app.get('/api/playlists', function(req, res){
@@ -237,8 +238,9 @@ function selectRandom(playlists, limit){
 
 
 function getIntersection(tracksA, tracksB, limit){
+    limit = limit || 100;
     list = _.intersectionBy(tracksA, tracksB, 'id');
-    return selectRandom(list, 100);
+    return selectRandom(list, limit);
 }
 
 
