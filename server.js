@@ -77,6 +77,10 @@ app.get('/templates/home', function(req, res){
   res.render('templates/home');
 });
 
+app.get('/templates/mix', function(req, res){
+  res.render('templates/mix');
+});
+
 // Routes for api service
 var routesApi = require('./routes/api');
 app.use('/api', routesApi);

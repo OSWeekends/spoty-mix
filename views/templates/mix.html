@@ -1,0 +1,22 @@
+<!-- MIXEANDO -->
+
+<p class="margin">
+	Selecciona las listas que quieres mezclar:
+</p>
+
+<div ng-controller="mixController as mix">
+	<div ng-repeat="item in mix.items" class="playlist-item">
+		<div>+</div>
+		<div>{{item.name}}</div>
+	</div>
+</div>
+
+<div class="btn-success btn margin">Mezclar listas</div>
+
+
+	<!--
+	<div>+</div>
+	<div>item.name</div>
+	<div>item.band</div>
+	<div>item.disc</div>
+	<div>item.duration</div> -->
