@@ -59,7 +59,6 @@ app.controller('userController', function(menu){
 app.controller('mixController', function(api, menu){
     var self = this;
 
-    self.lists = [];
     self.items = [ {
     "collaborative": false,
     "external_urls": {
@@ -129,7 +128,6 @@ app.controller('mixController', function(api, menu){
         api.put('/api/playlists/' + playlistId, function(data, status) {
             console.log(status);
             console.log(data);
-            self.lists = data;
         });
     }
 
@@ -140,7 +138,6 @@ app.controller('mixController', function(api, menu){
         api.delete('/api/playlists/' + playlistId, function(data, status) {
             console.log(status);
             console.log(data);
-            self.lists = data;
         });
     }
 
@@ -150,19 +147,11 @@ app.controller('mixController', function(api, menu){
     api.get('/api/playlists', function(data, status) {
         console.log(status);
         console.log(data);
-        self.lists = data;
+        self.items = data;
     });
 
 });
 
-
-app.factory("menu", function() {
-    var menu = {
-        active: 'user'
-    };
-
-    return menu;
-});
 
 app.factory("api", function($http) {
 
