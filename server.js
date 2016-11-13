@@ -128,12 +128,22 @@ app.post('/api/playlists', function(req, res){
     .then(function(data) {
       console.log('Created playlist!');
       spotifyApi.setAccessToken(tokens[req.user.id]);
+
+      // ID DE '🍻 Spoty Mix' ??
+
+      spotifyApi.addTracksToPlaylist(req.user.id, '3p1EShfqGhmUKBbfyuDQ5N', ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M"])
+      .then(function(data) {
+        console.log('Added tracks to playlist!');
+      }, function(err) {
+        console.log('Something went wrong!', err);
+      });
+
     }, function(err) {
       console.log('Something went wrong! -NIVEL1', err);
     })
   }
 
-  
+
 
 /*
   // Add tracks to a playlist
