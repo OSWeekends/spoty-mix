@@ -5,8 +5,9 @@
 </p>
 
 <div ng-controller="mixController as mix">
-	<div ng-repeat="item in mix.items" class="playlist-item">
-		<div>+</div>
+	<div id="list-{{item.id}}" ng-repeat="item in mix.items" class="playlist-item" ng-click="mix.list(item.id)">
+		<div class="icon-add">+</div>
+		<div class="icon-rem" style="display:none">-</div>
 		<div>{{item.name}}</div>
 	</div>
 </div>

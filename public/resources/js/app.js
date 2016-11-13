@@ -114,8 +114,19 @@ app.controller('mixController', function(api, menu){
     "uri": "spotify:user:wizzlersmate:playlist:1AVZz0mBuGbCEoNRQdYQju"
   } ];
 
+    self.list = function(playlistId) {
+        if($('#list-' + playlistId).hasClass('active')) {
+            self.removeList(playlistId);
+        } else {
+            self.addList(playlistId);
+        }
+    }
+
     self.addList = function(playlistId) {
-        api.put('/playlists/' + playlistId, function(data, status) {
+        $('#list-' + playlistId).addClass('active');
+        $('#list-' + playlistId + ' .icon-add').hide();
+        $('#list-' + playlistId + ' .icon-rem').show();
+        api.put('/api/playlists/' + playlistId, function(data, status) {
             console.log(status);
             console.log(data);
             self.lists = data;
@@ -123,7 +134,10 @@ app.controller('mixController', function(api, menu){
     }
 
     self.removeList = function(playlistId) {
-        api.delete('/playlists/' + playlistId, function(data, status) {
+        $('#list-' + playlistId).removeClass('active');
+        $('#list-' + playlistId + ' .icon-add').show();
+        $('#list-' + playlistId + ' .icon-rem').hide();
+        api.delete('/api/playlists/' + playlistId, function(data, status) {
             console.log(status);
             console.log(data);
             self.lists = data;
@@ -133,7 +147,7 @@ app.controller('mixController', function(api, menu){
     $('nav a').removeClass('active');
     $('nav a:nth-child(2)').addClass('active');
 
-    api.get('/playlists', function(data, status) {
+    api.get('/api/playlists', function(data, status) {
         console.log(status);
         console.log(data);
         self.lists = data;
