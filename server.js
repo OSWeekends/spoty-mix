@@ -8,10 +8,18 @@ var express = require('express'),
     firebase = require('firebase'),
     config = require('./config'),
     consolidate = require('consolidate'),
-    engine = require('express-dot-engine');
+    engine = require('express-dot-engine'),
+    SpotifyWebApi = require('spotify-web-api-node');
 
 var appKey = config.spotify.clientID;
 var appSecret = config.spotify.clientSecret;
+
+var spotifyApi = new SpotifyWebApi({
+  clientId : config.spotify.clientID,
+  clientSecret : config.spotify.clientSecret,
+  redirectUri : 'http://www.localhost.8080/callback'
+});
+
 
 firebase.initializeApp(config.firebase);
 
@@ -74,6 +82,7 @@ app.use(express.static(__dirname + '/public'));
 app.get('/', function(req, res){
   if(req.user){
       writeUserData(req.user.id, req.user)
+      
   }
   res.render('login');
 
@@ -129,7 +138,22 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 
-
 function writeUserData(id, data) {
   firebase.database().ref('users/' + id ).set(data);
+  
+  spotifyApi.getUser(id)
+  .then(function(userData) {
+    firebase.database().ref('users/' + id + 'userData').set(userData.body);
+    console.log('Some information about this user', userData.body);
+  }, function(err) {
+    console.log('Something went wrong!', err);
+  });
+  
+  spotifyApi.getUserPlaylists(id)
+  .then(function(playlists) {
+    firebase.database().ref('users/' + id + '/playlists').set(playlists.body);
+    console.log('Retrieved playlists', playlists.body);
+  },function(err) {
+    console.log('Something went wrong!', err);
+  });
 }
