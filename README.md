@@ -2,7 +2,7 @@
 
 Simple super feature for Spotify Client.
 
-### How set-up the enviroment
+### How set-up the environment
 
 **Note**: You need have Bower installed in your system.
 
