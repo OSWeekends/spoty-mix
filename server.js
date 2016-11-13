@@ -116,8 +116,11 @@ app.get('/logout', function(req, res){
   res.redirect('/');
 });
 
-app.listen(8080);
+var port = 8080;
 
+app.listen(port);
+
+console.log('Listening on', port);
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
