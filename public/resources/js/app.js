@@ -16,4 +16,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
 });
 
 
-app.controller('homeController', function($scope){});
+app.controller('homeController', function($scope){
+    var self = this;
+
+    self.friend = '';
+});
