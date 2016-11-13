@@ -179,9 +179,9 @@ function ensureAuthenticated(req, res, next) {
 }
 
 function selectRandom(playlists, limit){
-    if (!playlist){
+    if (!playlists){
         return [];
-    }else if (playlist.length == 0){
+    }else if (playlists.length == 0){
         return [];
     }else {
         var tracks = [];
