@@ -100,6 +100,7 @@ app.controller('mixController', function($state, api){
 
     self.sendMix = function() {
         var obj = {playlists: self.mix};
+
         api.post('/api/playlists', obj, function(resp) {
             console.log(resp);
             $state.go('playlist');
@@ -151,13 +152,13 @@ app.factory("api", function($http) {
         $http({
             method: 'POST',
             url: url,
-            transformRequest: function(obj) {
-                var str = [];
-                for(var p in obj)
-                str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                return str.join("&");
-            },
-            // dataType: 'jsonp',
+            // transformRequest: function(obj) {
+            //     var str = [];
+            //     for(var p in obj)
+            //     str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+            //     return str.join("&");
+            // },
+            dataType: 'json',
             data: data
         }).success(function(data, status, headers, config) {
             if(typeof(callback) != 'undefined') {
