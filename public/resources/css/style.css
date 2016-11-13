@@ -1,0 +1,92 @@
+/* LOGIN STYLES */
+html, body {
+	background-color: #333;
+	color: #fff
+}
+
+h1 {
+	color: white;
+    font-size: 64px;
+}
+
+	h1 img {
+		height: 64px;
+	}
+
+.login-screen .row {
+	margin: 0;
+}
+
+	.login-screen .login-column {
+		margin-top: calc(50vh - 100px);
+	}
+
+.login-btn {
+	width: 342px;
+    display: inline-block;
+    margin-top: 32px;
+}
+	.login-btn:hover {
+		text-decoration: none;
+	}
+
+/* PAGE TITLE */
+
+h1.page-title {
+	font-size: 48px;
+	margin: 32px;
+}
+	h1.page-title img {
+		height: 48px
+	}
+
+/* NAVIGATION */
+
+nav.navigation-row {
+	border-bottom: 1px solid #474747;
+	color: #fff;
+	margin: 16px;
+}
+	
+	nav.navigation-row a {
+		display: inline-block;
+	    color: #88898c;
+	    font-size: 14px;
+	    letter-spacing: 1.1px;
+		line-height: 44px;
+	    padding: 0 16px;
+	    text-transform: uppercase;
+	    transition: color 0.2s;
+	}
+
+	nav.navigation-row a:hover {
+	    color: #ffffff;
+	    text-decoration: none;
+	}
+
+	nav.navigation-row a.active {
+	    color: #ffffff;
+		border-bottom: 2px solid #84bd00;
+	}
+
+/* PLAYLISTS */
+
+.playlist-item {
+    border-bottom: 1px solid #474747;
+    padding: 4px 8px 4px;
+    margin: 0px 16px;
+}
+	.playlist-item:hover, .playlist-item.active {
+		background-color: rgba(255,255,255,.2);
+	}
+
+	.playlist-item div {
+	    display: inline-block;
+	    padding: 4px 12px;
+	}
+
+.margin {
+	margin: 16px;
+}
+
+	.icon-rem { display:  none;}

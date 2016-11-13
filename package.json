@@ -1,0 +1,58 @@
+{
+  "name": "spoty-mix",
+  "version": "0.1.0",
+  "description": "Why not?",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OSWeekends/spoty-mix.git"
+  },
+  "keywords": [
+    "spotify",
+    "mix",
+    "music",
+    "api"
+  ],
+  "author": "Open Source Weekends",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/OSWeekends/spoty-mix/issues"
+  },
+  "contributors": [
+    {
+      "name": "Carlos Hernandez",
+      "url": "https://github.com/codingcarlos"
+    },
+    {
+      "name": "Ulises Gascón",
+      "url": "https://github.com/ulisesGascon"
+    },
+    {
+      "name": "José Antonio",
+      "url": "https://github.com/JoseAntpr"
+    },
+    {
+      "name": "Jesús Cautivo Chacón",
+      "url": "https://github.com/jesus-chacon"
+    }
+  ],
+  "homepage": "https://github.com/OSWeekends/spoty-mix#readme",
+  "dependencies": {
+    "body-parser": "1.3.1",
+    "bower": "1.8.0",
+    "cookie-parser": "1.3.1",
+    "express": "4.14.0",
+    "express-dot-engine": "1.0.7",
+    "express-session": "1.4.0",
+    "firebase": "3.6.0",
+    "lodash": "^4.16.6",
+    "method-override": "2.0.2",
+    "passport": "0.3.2",
+    "passport-spotify": "0.3.0",
+    "q": "1.4.1",
+    "spotify-web-api-node": "2.3.6"
+  }
+}
