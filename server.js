@@ -5,11 +5,16 @@ var express = require('express'),
     session = require('express-session'),
     passport = require('passport'),
     SpotifyStrategy = require('passport-spotify').Strategy,
+    firebase = require('firebase'),
     config = require('./config'),
+    consolidate = require('consolidate'),
     engine = require('express-dot-engine');
 
 var appKey = config.spotify.clientID;
 var appSecret = config.spotify.clientSecret;
+
+firebase.initializeApp(config.firebase);
+
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -67,7 +72,11 @@ app.use(express.static(__dirname + '/public'));
 
 
 app.get('/', function(req, res){
+  if(req.user){
+      writeUserData(req.user.id, req.user)
+  }
   res.render('login');
+
 });
 
 app.get('/index', function(req, res){
@@ -118,4 +127,9 @@ app.listen(8080);
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login');
+}
+
+
+function writeUserData(id, data) {
+  firebase.database().ref('users/' + id ).set(data);
 }
