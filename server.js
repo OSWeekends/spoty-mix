@@ -42,11 +42,6 @@ passport.use(new SpotifyStrategy({
     spotifyApi.setAccessToken(accessToken);
     console.log("accesstoken", accessToken)
     var authorizeURL = spotifyApi.createAuthorizeURL(['playlist-modify', 'user-library-modify', 'playlist-read', 'playlist-modify-public', 'playlist-modify-private'], "me_lo_invento");
-    spotifyApi.authorizationCodeGrant(accessToken).then(function(data){
-      console.log("DATAAAAAA", data)
-    }, function(err){
-      console.log("ERRRRR", err)
-    })
     console.log(authorizeURL);
     process.nextTick(function () {
       return done(null, profile);
@@ -124,36 +119,67 @@ app.post('/api/playlists', function(req, res){
     res.status(401).json({err:'Unauthorized', data: ''});
   }else {
     spotifyApi.setAccessToken(tokens[req.user.id]);
-    spotifyApi.createPlaylist(req.user.id, '🍻 Spoty Mix')
-    .then(function(data) {
-      console.log('Created playlist!');
-      spotifyApi.setAccessToken(tokens[req.user.id]);
-
-      // ID DE '🍻 Spoty Mix' ??
-
-      spotifyApi.addTracksToPlaylist(req.user.id, '3p1EShfqGhmUKBbfyuDQ5N', ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M"])
-      .then(function(data) {
-        console.log('Added tracks to playlist!');
-      }, function(err) {
-        console.log('Something went wrong!', err);
+    getAllPlaylist(req.user.id).then(function(pls){
+      var playlist = _.find(pls, function(playlist){
+        return playlist.name == '🍻 Spoty Mix';
       });
+      if (playlist){
+          var playlists = req.body.playlists;
+          var tracks = [];
+          _.forEach(playlists, function(playlist){
+            tracks = _.concat(tracks, _.map(playlist.tracks, function(track){
+              return track.uri;
+            }))
+          });
+          tracks = selectRandom(tracks, 100);
+          spotifyApi.setAccessToken(tokens[req.user.id]);
+          spotifyApi.addTracksToPlaylist(req.user.id, playlist.id, tracks)
+          .then(function(data) {
+            console.log('Added tracks to playlist!');
+            res.json({err:'', data:playlist.id});
+          }, function(err) {
+            console.log('Something went wrong!', err);
+          });
+      }else {
+        spotifyApi.setAccessToken(tokens[req.user.id]);
+        spotifyApi.createPlaylist(req.user.id, '🍻 Spoty Mix')
+          .then(function(data) {
+            console.log('Created playlist!');
+            spotifyApi.setAccessToken(tokens[req.user.id]);
 
-    }, function(err) {
-      console.log('Something went wrong! -NIVEL1', err);
-    })
+            var playlists = req.body.playlists;
+            var tracks = [];
+            _.forEach(playlists, function(playlist){
+              tracks = _.concat(tracks, _.map(playlist.tracks, function(track){
+                return track.uri;
+              }))
+            });
+            tracks = selectRandom(tracks, 100);
+            spotifyApi.setAccessToken(tokens[req.user.id]);
+            getAllPlaylist(req.user.id).then(function(pls){
+              var playlist = _.find(pls, function(playlist){
+                return playlist.name == '🍻 Spoty Mix';
+              });
+              if (playlist){
+                spotifyApi.setAccessToken(tokens[req.user.id]);
+                spotifyApi.addTracksToPlaylist(req.user.id, playlists.id, tracks)
+                  .then(function(data) {
+                    console.log('Added tracks to playlist!');
+                  }, function(err) {
+                    console.log('Something went wrong!', err);
+                  });
+              }
+            },function(err){
+              console.log('Something went wrong! search the list', err);
+            });
+          }, function(err) {
+            console.log('Something went wrong! -NIVEL1', err);
+          });
+      }
+    }, function(err){
+      console.log('Something went wrong! -get all playlists', err);
+    });
   }
-
-
-
-/*
-  // Add tracks to a playlist
-  spotifyApi.addTracksToPlaylist('thelinmichael', '5ieJqeLJjjI8iJWaxeBLuK', ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M"])
-  .then(function(data) {
-    console.log('Added tracks to playlist!');
-  }, function(err) {
-    console.log('Something went wrong!', err);
-  });
-*/
 });
 
 // DELETE /api/playlists/:playlistId
@@ -219,7 +245,11 @@ function getIntersection(tracksA, tracksB, limit){
 function writeUserData(id, data) {
   firebase.database().ref('users/' + id ).set(data);
 
-  spotifyApi.getUserPlaylists(id)
+  getAllPlaylist(id, true);
+}
+
+function getAllPlaylist(id, save){
+  return spotifyApi.getUserPlaylists(id)
   .then(function(playlists) {
 
     var calls = [];
@@ -231,10 +261,10 @@ function writeUserData(id, data) {
       p1.resolve(playlists.body.items[i]);
     };
 
-    Q.all(calls).then(function(data){
+    return Q.all(calls).then(function(data){
+      var res = [];
       for (var i = 0; i< data.length;i++){
         var tracks = [];
-
         for (var j=0; j<data[i][1].body.tracks.items.length; j++){
           var aux = data[i][1].body.tracks.items[j].track;
           tracks.push({
@@ -249,17 +279,22 @@ function writeUserData(id, data) {
             uri: aux.uri
           });
         }
-        firebase.database().ref('users/' + id + '/playlists').push({
+        var pushAux = {
           owner: data[i][0].owner.id,
           id: data[i][0].id,
           name: data[i][0].name,
           total: data[i][1].body.tracks.items.length,
           tracks: tracks
-        })
+        };
+        res.push(pushAux);
+        if (save){
+          firebase.database().ref('users/' + id + '/playlists').push(pushAux);
+        }
       }
+      return res;
     });
-
   },function(err) {
     console.log('Something went wrong!', err);
+    return err;
   });
 }
