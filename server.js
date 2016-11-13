@@ -8,7 +8,8 @@ var express = require('express'),
     firebase = require('firebase'),
     config = require('./config'),
     engine = require('express-dot-engine'),
-    SpotifyWebApi = require('spotify-web-api-node');
+    SpotifyWebApi = require('spotify-web-api-node'),
+    Q = require('q');
 
 var appKey = config.spotify.clientID;
 var appSecret = config.spotify.clientSecret;
@@ -22,14 +23,6 @@ var spotifyApi = new SpotifyWebApi({
 
 firebase.initializeApp(config.firebase);
 
-
-// Passport session setup.
-//   To support persistent login sessions, Passport needs to be able to
-//   serialize users into and deserialize users out of the session. Typically,
-//   this will be as simple as storing the user ID when serializing, and finding
-//   the user by ID when deserializing. However, since this example does not
-//   have a database of user records, the complete spotify profile is serialized
-//   and deserialized.
 passport.serializeUser(function(user, done) {
   done(null, user);
 });
@@ -38,23 +31,14 @@ passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
 
-
-// Use the SpotifyStrategy within Passport.
-//   Strategies in Passport require a `verify` function, which accept
-//   credentials (in this case, an accessToken, refreshToken, and spotify
-//   profile), and invoke a callback with a user object.
 passport.use(new SpotifyStrategy({
   clientID: appKey,
   clientSecret: appSecret,
   callbackURL: 'http://localhost:8080/callback'
   },
   function(accessToken, refreshToken, profile, done) {
-    // asynchronous verification, for effect...
+    spotifyApi.setAccessToken(accessToken);
     process.nextTick(function () {
-      // To keep the example simple, the user's spotify profile is returned to
-      // represent the logged-in user. In a typical application, you would want
-      // to associate the spotify account with a user record in your database,
-      // and return that user instead.
       return done(null, profile);
     });
   }));
@@ -70,8 +54,6 @@ app.use(cookieParser());
 app.use(bodyParser());
 app.use(methodOverride());
 app.use(session({ secret: 'keyboard cat' }));
-// Initialize Passport!  Also use passport.session() middleware, to support
-// persistent login sessions (recommended).
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -99,23 +81,11 @@ app.get('/templates/home', function(req, res){
 var routesApi = require('./routes/api');
 app.use('/api', routesApi);
 
-// GET /auth/spotify
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request. The first step in spotify authentication will involve redirecting
-//   the user to spotify.com. After authorization, spotify will redirect the user
-//   back to this application at /auth/spotify/callback
 app.get('/auth/spotify',
   passport.authenticate('spotify', {scope: ['user-read-email', 'user-read-private'], showDialog: true}),
   function(req, res){
-// The request will be redirected to spotify for authentication, so this
-// function will not be called.
 });
 
-// GET /auth/spotify/callback
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request. If authentication fails, the user will be redirected back to the
-//   login page. Otherwise, the primary route function function will be called,
-//   which, in this example, will redirect the user to the home page.
 app.get('/callback',
   passport.authenticate('spotify', { failureRedirect: '/login' }),
   function(req, res) {
@@ -133,11 +103,6 @@ app.listen(port);
 
 console.log('Listening on', port);
 
-// Simple route middleware to ensure user is authenticated.
-//   Use this route middleware on any resource that needs to be protected.  If
-//   the request is authenticated (typically via a persistent login session),
-//   the request will proceed. Otherwise, the user will be redirected to the
-//   login page.
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login');
@@ -146,20 +111,31 @@ function ensureAuthenticated(req, res, next) {
 function writeUserData(id, data) {
   firebase.database().ref('users/' + id ).set(data);
 
-/*
-  spotifyApi.getUser(id)
-  .then(function(userData) {
-    firebase.database().ref('users/' + id + 'userData').set(userData.body);
-    console.log('Some information about this user', userData.body);
-  }, function(err) {
-    console.log('Something went wrong!', err);
-  });
-*/
-  
-  spotifyApi.getUserPlaylists(id)
+  spotifyApi.getUserPlaylists("kom256")
   .then(function(playlists) {
-    firebase.database().ref('users/' + id + '/playlists').set(playlists.body);
-    console.log('Retrieved playlists', playlists.body);
+
+    var calls = [];
+    for (var i = 0; i < playlists.body.items.length; i++) {
+      console.log('name: playlists.body.items[i].name:', playlists.body.items[i].name)
+      var p1 = Q.defer();
+      var p2 = spotifyApi.getPlaylist(playlists.body.items[i].owner.id, playlists.body.items[i].id);
+      var aux = Q.all([p1.promise, p2]);
+      calls.push(aux);
+      p1.resolve(playlists.body.items[i]);
+    };
+
+    Q.all(calls).then(function(data){
+      for (var i = 0; i< data.length;i++){
+        firebase.database().ref('users/' + id + '/playlists').push({
+          owner: data[i][0].owner.id,
+          id: data[i][0].id,
+          name: data[i][0].name,
+          total: data[i][1].body.tracks.items.length,
+          tracks: data[i][1].body.tracks.items
+        })
+      }
+    });
+
   },function(err) {
     console.log('Something went wrong!', err);
   });
