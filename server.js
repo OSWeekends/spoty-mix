@@ -149,7 +149,7 @@ app.post('/api/playlists', function(req, res){
           spotifyApi.addTracksToPlaylist(req.user.id, playlist.id, tracks)
           .then(function(data) {
             console.log('Added tracks to playlist!');
-            res.json({err:'', data:playlist.id});
+            res.json({err:'', data:{owner: req.user.id, playlistId:playlist.id}});
           }, function(err) {
             console.log('Something went wrong!', err);
           });
@@ -181,7 +181,7 @@ app.post('/api/playlists', function(req, res){
                 spotifyApi.setAccessToken(tokens[req.user.id]);
                 spotifyApi.addTracksToPlaylist(req.user.id, playlist.id, tracks)
                   .then(function(data) {
-                    res.json({err:'', data:playlist.id});
+                    res.json({err:'', data:{owner: req.user.id, playlistId:playlist.id}});
                     console.log('Added tracks to playlist!');
                   }, function(err) {
                     console.log('Something went wrong!', err);

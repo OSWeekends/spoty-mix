@@ -19,7 +19,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
             controller: 'mixController'
         })
         .state('playlist', {
-            url: "/playlist",
+            url: "/playlist/:playlistId/:owner",
             templateUrl: "/templates/playlist"
         });
 });
@@ -46,17 +46,19 @@ app.controller('userController', function(){
 });
 
 
-app.controller('playlistController', function($sce){
+app.controller('playlistController', function($stateParams, $sce){
     var self = this;
+
+    console.log($stateParams.playlistId);
 
     var array = [
         '3rgsDhGHZxZ9sB9DQWQfuf',
         '0Vib1QAMtMaiywa3QSEq40'
     ];
-    var rand = array[Math.floor(Math.random() * array.length)];
+    var rand = $stateParams.playlistId || array[Math.floor(Math.random() * array.length)];
 
     // $scope.trustSrc = function(src) {
-       self.player = $sce.trustAsResourceUrl('https://embed.spotify.com/?uri=spotify:user:spotify:playlist:' + rand);
+       self.player = $sce.trustAsResourceUrl('https://embed.spotify.com/?uri=spotify:user:' + $stateParams.owner + ':playlist:' + rand);
     // }
 
     // self.player = 'https://embed.spotify.com/?uri=spotify:user:spotify:playlist:' + rand;
@@ -102,8 +104,9 @@ app.controller('mixController', function($state, api){
         var obj = {playlists: self.mix};
 
         api.post('/api/playlists', obj, function(resp) {
+            console.log('VUELVEN COSAS');
             console.log(resp);
-            $state.go('playlist');
+            $state.go('playlist', {playlistId: resp.data.playlistId, owner: resp.data.owner});
         });
     }
 
