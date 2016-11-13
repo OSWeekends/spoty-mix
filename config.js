@@ -7,8 +7,8 @@ var config = {
         messagingSenderId: "1040957135146"
     },
     spotify: {
-        clientID: "8655499cc2534b8bb583c2382660d39b",
-        clientSecret: "c2cef9d44a344990af5913ea30abcae8",
+        clientID: "1f50800e0a584d4384243758e8db9ae6",
+        clientSecret: "d2fd5261dcc743a782e6713979b156d9",
     }
 };
 

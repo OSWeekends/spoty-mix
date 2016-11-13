@@ -10,6 +10,7 @@ var express = require('express'),
     engine = require('express-dot-engine'),
     SpotifyWebApi = require('spotify-web-api-node'),
     Q = require('q');
+    //router = express.Router();
 
 var appKey = config.spotify.clientID;
 var appSecret = config.spotify.clientSecret;
@@ -38,7 +39,11 @@ passport.use(new SpotifyStrategy({
   },
   function(accessToken, refreshToken, profile, done) {
     config.spotify.token = accessToken;
+    //console.log("token", accessToken)
     spotifyApi.setAccessToken(accessToken);
+    var authorizeURL = spotifyApi.createAuthorizeURL(['playlist-modify', 'user-library-modify', 'playlist-read', 'playlist-modify-public', 'playlist-modify-private'], "me_lo_invento");
+    console.log(authorizeURL);
+    //app.set("spotify", spotifyApi)
     process.nextTick(function () {
       return done(null, profile);
     });
@@ -89,11 +94,74 @@ app.get('/templates/playlist', function(req, res){
 });
 
 // Routes for api service
-var routesApi = require('./routes/api');
-app.use('/api', routesApi);
+
+//var routesApi = require('./routes/api');
+//app.use('/api', routesApi);
+
+
+
+
+app.post('/api/users', function(req, res){});
+
+// GET /api/playlists
+//   Get the playlists of user for build the mix
+app.get('/api/playlists', function(req, res){
+    if (!req.user){
+        res.status(401).json({err:'Unauthorized', data: ''});
+    }else {
+        var db = firebase.database();
+        var ref = db.ref("users/"+req.user.id+'/playlists');
+
+        // Attach an asynchronous callback to read the data at our posts reference
+        ref.once("value", function(snapshot) {
+            res.json({err:'', data: snapshot.val()});
+        }, function (errorObject) {
+            res.json({err:errorObject, data: ''});
+        });
+    }
+});
+
+// PUT /api/playlists/:playlistId
+//   Add the playlist of the new temporal list
+app.post('/api/playlists/:songList', function(req, res){
+  //console.log(req.user)
+  /*
+  var spotifyApi = new SpotifyWebApi({
+    clientId : config.spotify.clientID,
+    clientSecret : config.spotify.clientSecret,
+    redirectUri : 'http://www.localhost.8080/callback'
+  });
+  spotifyApi.setAccessToken(config.spotify.token);
+  */
+  //console.log("token", config.spotify.token)
+  //spotifyApi = app.get("spotify")
+  console.log("HOLAAAAAA");
+  spotifyApi.createPlaylist('kom256', ':beers: Spoty Mix')
+  .then(function(data) {
+    console.log('Created playlist!');
+  }, function(err) {
+    console.log('Something went wrong!', err);
+  });
+
+/*
+  // Add tracks to a playlist
+  spotifyApi.addTracksToPlaylist('thelinmichael', '5ieJqeLJjjI8iJWaxeBLuK', ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M"])
+  .then(function(data) {
+    console.log('Added tracks to playlist!');
+  }, function(err) {
+    console.log('Something went wrong!', err);
+  });
+*/
+});
+
+// DELETE /api/playlists/:playlistId
+//   remove the playlist of the temporal list
+app.delete('/api/playlists/:playlistId', function(req, res){});
+
+
 
 app.get('/auth/spotify',
-  passport.authenticate('spotify', {scope: ['user-read-email', 'user-read-private'], showDialog: true}),
+  passport.authenticate('spotify', {scope: ['playlist-modify', 'user-library-modify', 'playlist-read', 'playlist-modify-public', 'playlist-modify-private'], showDialog: true}),
   function(req, res){
 });
 
@@ -118,6 +186,34 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login');
 }
+
+function selectRandom(playlists, limit){
+    if (!playlist){
+        return [];
+    }else if (playlist.length == 0){
+        return [];
+    }else {
+        var tracks = [];
+        _.forEach(playlists, function(playlist){
+            tracks = _.concat(tracks, playlist.tracks);
+        });
+
+        var selectedTracks = [];
+        _.times((tracks.length>=limit)?limit:tracks.length, function(){
+            var rand = _.random(0, tracks.length-1);
+            selectedTracks.push(tracks[rand]);
+            tarcks.splice(rand, 1);
+        });
+        return selectedTracks;
+    }
+}
+
+
+function getIntersection(tracksA, tracksB, limit){
+    list = _.intersectionBy(tracksA, tracksB, 'id');
+    return selectRandom(list, 100);
+}
+
 
 function writeUserData(id, data) {
   firebase.database().ref('users/' + id ).set(data);
