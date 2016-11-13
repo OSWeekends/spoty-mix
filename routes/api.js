@@ -69,7 +69,7 @@ router.post('/playlists/:songList', function(req, res){
 router.delete('/playlists/:playlistId', function(req, res){});
 
 
-function selectRandom(playlists){
+function selectRandom(playlists, limit){
     if (!playlist){
         return [];
     }else if (playlist.length == 0){
@@ -81,7 +81,7 @@ function selectRandom(playlists){
         });
 
         var selectedTracks = [];
-        _.times((tracks.length>=100)?100:tracks.length, function(){
+        _.times((tracks.length>=limit)?limit:tracks.length, function(){
             var rand = _.random(0, tracks.length-1);
             selectedTracks.push(tracks[rand]);
             tarcks.splice(rand, 1);
@@ -89,5 +89,12 @@ function selectRandom(playlists){
         return selectedTracks;
     }
 }
+
+
+function getIntersection(tracksA, tracksB, limit){
+    list = _.intersectionBy(tracksA, tracksB, 'id');
+    return selectRandom(list, 100);
+}
+
 
 module.exports = router;
