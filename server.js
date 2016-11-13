@@ -73,10 +73,11 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(req, res){
   if(req.user){
-      writeUserData(req.user.id, req.user)
+    writeUserData(req.user.id, req.user);
+    res.redirect('/index');
+  }else {
+    res.render('login');
   }
-  res.render('login');
-
 });
 
 app.get('/index', function(req, res){
@@ -108,7 +109,7 @@ app.get('/auth/spotify',
 app.get('/callback',
   passport.authenticate('spotify', { failureRedirect: '/login' }),
   function(req, res) {
-    res.redirect('/index');
+    res.redirect('/');
   });
 
 app.get('/logout', function(req, res){
