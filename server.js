@@ -80,6 +80,9 @@ app.get('/templates/home', function(req, res){
 app.get('/templates/mix', function(req, res){
   res.render('templates/mix');
 });
+app.get('/templates/playlist', function(req, res){
+  res.render('templates/playlist');
+});
 
 // Routes for api service
 var routesApi = require('./routes/api');

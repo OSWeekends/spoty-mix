@@ -17,25 +17,15 @@ app.config(function($stateProvider, $urlRouterProvider) {
             url: "/mix",
             templateUrl: "/templates/mix",
             controller: 'mixController'
+        })
+        .state('playlist', {
+            url: "/playlist",
+            templateUrl: "/templates/playlist"
         });
 });
 
 
-app.controller('navController', function(menu){
-    var self = this;
-
-    console.log(menu.active);
-    self.menu = menu;
-    self.active = menu.active;
-    self.state = function() {
-        console.log($state.current.name);
-        return $state.current.name;
-    }
-
-});
-
-
-app.controller('userController', function(menu){
+app.controller('userController', function(){
     var self = this;
 
     self.friend = '';
@@ -56,7 +46,7 @@ app.controller('userController', function(menu){
 });
 
 
-app.controller('mixController', function(api, menu){
+app.controller('mixController', function(api){
     var self = this;
 
     self.items = [ {
