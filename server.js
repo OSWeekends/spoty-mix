@@ -7,7 +7,6 @@ var express = require('express'),
     SpotifyStrategy = require('passport-spotify').Strategy,
     firebase = require('firebase'),
     config = require('./config'),
-    consolidate = require('consolidate'),
     engine = require('express-dot-engine'),
     SpotifyWebApi = require('spotify-web-api-node');
 
@@ -81,11 +80,11 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(req, res){
   if(req.user){
-      writeUserData(req.user.id, req.user._json)
-      
+    writeUserData(req.user.id, req.user._json)
+    res.redirect('/index');
+  }else {
+    res.render('login');
   }
-  res.render('login');
-
 });
 
 app.get('/index', function(req, res){
@@ -117,7 +116,7 @@ app.get('/auth/spotify',
 app.get('/callback',
   passport.authenticate('spotify', { failureRedirect: '/login' }),
   function(req, res) {
-    res.redirect('/index');
+    res.redirect('/');
   });
 
 app.get('/logout', function(req, res){
@@ -125,8 +124,11 @@ app.get('/logout', function(req, res){
   res.redirect('/');
 });
 
-app.listen(8080);
+var port = 8080;
 
+app.listen(port);
+
+console.log('Listening on', port);
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
