@@ -1,0 +1,25 @@
+{
+  "name": "spoty-mix",
+  "description": "Why not?",
+  "main": "app.js",
+  "author": "Open Source Weekends",
+  "license": "GPL-3.0",
+  "keywords": [
+    "spotify",
+    "mix",
+    "music",
+    "api"
+  ],
+  "moduleType": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "angular": "^1.5.8",
+    "angular-ui-router": "^0.3.2",
+    "bootstrap": "^3.3.7"
+  }
+}
