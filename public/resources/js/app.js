@@ -21,7 +21,21 @@ app.config(function($stateProvider, $urlRouterProvider) {
 });
 
 
-app.controller('userController', function($scope){
+app.controller('navController', function(menu){
+    var self = this;
+
+    console.log(menu.active);
+    self.menu = menu;
+    self.active = menu.active;
+    self.state = function() {
+        console.log($state.current.name);
+        return $state.current.name;
+    }
+
+});
+
+
+app.controller('userController', function(menu){
     var self = this;
 
     self.friend = '';
@@ -34,12 +48,15 @@ app.controller('userController', function($scope){
         api.post('/users', json, function(data, status) {
             console.log(status);
             console.log(data);
-        })
+        });
     }
+
+    $('nav a').removeClass('active');
+    $('nav a:nth-child(1)').addClass('active');
 });
 
 
-app.controller('mixController', function(api){
+app.controller('mixController', function(api, menu){
     var self = this;
 
     self.lists = [];
@@ -60,6 +77,9 @@ app.controller('mixController', function(api){
         });
     }
 
+    $('nav a').removeClass('active');
+    $('nav a:nth-child(2)').addClass('active');
+
     api.get('/playlists', function(data, status) {
         console.log(status);
         console.log(data);
@@ -68,6 +88,14 @@ app.controller('mixController', function(api){
 
 });
 
+
+app.factory("menu", function() {
+    var menu = {
+        active: 'user'
+    };
+
+    return menu;
+});
 
 app.factory("api", function($http) {
 

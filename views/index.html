@@ -8,7 +8,7 @@
         <h1 class="page-title">
             <img src="/resources/img/logo_white.png" class="img-logo"> spotymix
         </h1>
-        <nav class="navigation-row">
+        <nav class="navigation-row" ng-controller="navController">
             <a ui-sref="user" class="active visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">Lista con usuario</a>
             <a ui-sref="mix" class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">Mix de listas</a>
             <a href="/logout" class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">Salir</a>
@@ -18,6 +18,8 @@
 
         <script src="/node_modules/angular/angular.min.js"></script>
         <script src="/node_modules/angular-ui-router/release/angular-ui-router.min.js"></script>
+        <script src="/node_modules/jquery/dist/jquery.min.js"></script>
         <script src="/resources/js/app.js"></script>
+        
     </body>
 </html>
