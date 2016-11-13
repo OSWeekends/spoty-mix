@@ -1,5 +1,26 @@
-{% extends 'layout.html' %}
+<html>
+	<head>
+		<title>Spotymix</title>
+		<link rel="stylesheet" href="/node_modules/bootstrap/dist/bootstrap.min.css">
+        <link rel="stylesheet" href="/resources/css/style.css">
 
-{% block content %}
-<a href="/auth/spotify">Login with Spotify</a>
-{% endblock %}
+	</head>
+
+	<body>
+
+		<div class="containter login-screen">
+			<div class="row">
+
+				<div class="col-md-6 hidden-sm">
+					<img src="">
+				</div>
+				
+				<div class="col-md-6 col-sm-12 text-center login-column">
+					<h1><img src="http://localhost/spoty-mix/public/resources/img/logo_white.png" class="img-logo"> spotymix</h1>
+					<a class="login-btn btn-success btn-lg" href="auth/spotify">LOGIN</a>
+				</div>
+			</div>
+		</div>
+	</body>
+
+</html>
