@@ -64,88 +64,45 @@ app.controller('playlistController', function($sce){
 });
 
 
-app.controller('mixController', function(api){
+app.controller('mixController', function($state, api){
     var self = this;
 
-    self.items = [ {
-    "collaborative": false,
-    "external_urls": {
-      "spotify": "http://open.spotify.com/user/wizzler/playlists/53Y8wT46QIMz5H4WQ8O22c"
-    },
-    "href": "https://api.spotify.com/v1/users/wizzler/playlists/53Y8wT46QIMz5H4WQ8O22c",
-    "id": "53Y8wT46QIMz5H4WQ8O22c",
-    "images" : [ ],
-    "name": "Wizzlers Big Playlist",
-    "owner": {
-      "external_urls": {
-        "spotify": "http://open.spotify.com/user/wizzler"
-      },
-      "href": "https://api.spotify.com/v1/users/wizzler",
-      "id": "wizzler",
-      "type": "user",
-      "uri": "spotify:user:wizzler"
-    },
-    "public": true,
-    "snapshot_id" : "bNLWdmhh+HDsbHzhckXeDC0uyKyg4FjPI/KEsKjAE526usnz2LxwgyBoMShVL+z+",
-    "tracks": {
-      "href": "https://api.spotify.com/v1/users/wizzler/playlists/53Y8wT46QIMz5H4WQ8O22c/tracks",
-      "total": 30
-    },
-    "type": "playlist",
-    "uri": "spotify:user:wizzler:playlist:53Y8wT46QIMz5H4WQ8O22c"
-  }, {
-    "collaborative": false,
-    "external_urls": {
-      "spotify": "http://open.spotify.com/user/wizzlersmate/playlists/1AVZz0mBuGbCEoNRQdYQju"
-    },
-    "href": "https://api.spotify.com/v1/users/wizzlersmate/playlists/1AVZz0mBuGbCEoNRQdYQju",
-    "id": "1AVZz0mBuGbCEoNRQdYQju",
-    "images" : [ ],
-    "name": "Another Playlist",
-    "owner": {
-      "external_urls": {
-        "spotify": "http://open.spotify.com/user/wizzlersmate"
-      },
-      "href": "https://api.spotify.com/v1/users/wizzlersmate",
-      "id": "wizzlersmate",
-      "type": "user",
-      "uri": "spotify:user:wizzlersmate"
-    },
-    "public": true,
-    "snapshot_id" : "Y0qg/IT5T02DKpw4uQKc/9RUrqQJ07hbTKyEeDRPOo9LU0g0icBrIXwVkHfQZ/aD",
-    "tracks": {
-      "href": "https://api.spotify.com/v1/users/wizzlersmate/playlists/1AVZz0mBuGbCEoNRQdYQju/tracks",
-      "total": 58
-    },
-    "type": "playlist",
-    "uri": "spotify:user:wizzlersmate:playlist:1AVZz0mBuGbCEoNRQdYQju"
-  } ];
+    self.items = [];
+    self.mix = [];
 
-    self.list = function(playlistId) {
+    self.list = function(object) {
+        var playlistId = object.id;
         if($('#list-' + playlistId).hasClass('active')) {
-            self.removeList(playlistId);
+            self.removeList(object);
         } else {
-            self.addList(playlistId);
+            self.addList(object);
         }
     }
 
-    self.addList = function(playlistId) {
+    self.addList = function(object) {
+        var playlistId = object.id;
         $('#list-' + playlistId).addClass('active');
         $('#list-' + playlistId + ' .icon-add').hide();
         $('#list-' + playlistId + ' .icon-rem').show();
-        api.put('/api/playlists/' + playlistId, function(data, status) {
-            console.log(status);
-            console.log(data);
-        });
+
+        self.mix.push(object);
     }
 
-    self.removeList = function(playlistId) {
+    self.removeList = function(object) {
+        var playlistId = object.id;
         $('#list-' + playlistId).removeClass('active');
         $('#list-' + playlistId + ' .icon-add').show();
         $('#list-' + playlistId + ' .icon-rem').hide();
-        api.delete('/api/playlists/' + playlistId, function(data, status) {
-            console.log(status);
-            console.log(data);
+        
+        var index = self.mix.indexOf(object);
+        self.mix = self.mix.splice(index, 1);
+    }
+
+    self.sendMix = function() {
+        var obj = {playlists: self.mix};
+        api.post('/api/playlists', obj, function(resp) {
+            console.log(resp);
+            $state.go('playlist');
         });
     }
 
@@ -155,7 +112,7 @@ app.controller('mixController', function(api){
     api.get('/api/playlists', function(data, status) {
         console.log(status);
         console.log(data);
-        self.items = data;
+        self.items = data.data;
     });
 
 });
