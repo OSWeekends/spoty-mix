@@ -4,12 +4,11 @@ var express = require('express'),
     methodOverride = require('method-override'),
     session = require('express-session'),
     passport = require('passport'),
-    swig = require('swig'),
     SpotifyStrategy = require('passport-spotify').Strategy,
     firebase = require('firebase'),
-    config = require('./config');
-
-var consolidate = require('consolidate');
+    config = require('./config'),
+    consolidate = require('consolidate'),
+    engine = require('express-dot-engine');
 
 var appKey = config.spotify.clientID;
 var appSecret = config.spotify.clientSecret;
@@ -56,8 +55,9 @@ passport.use(new SpotifyStrategy({
 var app = express();
 
 // configure Express
+app.engine('html', engine.__express);
 app.set('views', __dirname + '/views');
-app.set('view engine', 'ejs');
+app.set('view engine', 'html');
 
 app.use(cookieParser());
 app.use(bodyParser());
@@ -70,22 +70,23 @@ app.use(passport.session());
 
 app.use(express.static(__dirname + '/public'));
 
-app.engine('html', consolidate.swig);
 
 app.get('/', function(req, res){
   if(req.user){
-      writeUserData(req.user)
+      writeUserData(req.user.id, req.user)
   }
-  res.render('index.html', { user: req.user });
+  res.render('login');
+
 });
 
-app.get('/account', ensureAuthenticated, function(req, res){
-  res.render('account.html', { user: req.user });
+app.get('/index', function(req, res){
+  res.render('index');
 });
 
-app.get('/login', function(req, res){
-  res.render('login.html', { user: req.user });
+app.get('/templates/home', function(req, res){
+  res.render('templates/home');
 });
+
 
 // GET /auth/spotify
 //   Use passport.authenticate() as route middleware to authenticate the
@@ -129,6 +130,6 @@ function ensureAuthenticated(req, res, next) {
 }
 
 
-function writeUserData(data) {
-  firebase.database().ref('users/').set(data);
+function writeUserData(id, data) {
+  firebase.database().ref('users/' + id ).set(data);
 }
