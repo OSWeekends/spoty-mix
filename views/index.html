@@ -1,4 +1,4 @@
-<html>
+<html ng-app="spotymix">
     <head>
         <title>Spoty-mix</title>
         <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
@@ -9,10 +9,11 @@
             <img src="/resources/img/logo_white.png" class="img-logo"> spotymix
         </h1>
         <nav class="navigation-row">
-            <a class="active visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">Lista con usuario</a>
-            <a class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">Mix de listas</a>
-            <a class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">Salir</a>
+            <a ui-sref="user" class="active visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">Lista con usuario</a>
+            <a ui-sref="mix" class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">Mix de listas</a>
+            <a href="/logout" class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">Salir</a>
         </nav>
+
         <ui-view></ui-view>
 
         <script src="/node_modules/angular/angular.min.js"></script>
