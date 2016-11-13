@@ -111,7 +111,7 @@ function ensureAuthenticated(req, res, next) {
 function writeUserData(id, data) {
   firebase.database().ref('users/' + id ).set(data);
 
-  spotifyApi.getUserPlaylists("kom256")
+  spotifyApi.getUserPlaylists(id)
   .then(function(playlists) {
 
     var calls = [];
