@@ -10,8 +10,8 @@ var express = require('express'),
     engine = require('express-dot-engine'),
     SpotifyWebApi = require('spotify-web-api-node'),
     Q = require('q');
-    //router = express.Router();
 
+var tokens = {};
 var appKey = config.spotify.clientID;
 var appSecret = config.spotify.clientSecret;
 
@@ -38,12 +38,10 @@ passport.use(new SpotifyStrategy({
   callbackURL: 'http://localhost:8080/callback'
   },
   function(accessToken, refreshToken, profile, done) {
-    config.spotify.token = accessToken;
-    //console.log("token", accessToken)
+    tokens[profile.id] = accessToken;
     spotifyApi.setAccessToken(accessToken);
     var authorizeURL = spotifyApi.createAuthorizeURL(['playlist-modify', 'user-library-modify', 'playlist-read', 'playlist-modify-public', 'playlist-modify-private'], "me_lo_invento");
     console.log(authorizeURL);
-    //app.set("spotify", spotifyApi)
     process.nextTick(function () {
       return done(null, profile);
     });
@@ -92,14 +90,6 @@ app.get('/templates/mix', function(req, res){
 app.get('/templates/playlist', function(req, res){
   res.render('templates/playlist');
 });
-
-// Routes for api service
-
-//var routesApi = require('./routes/api');
-//app.use('/api', routesApi);
-
-
-
 
 app.post('/api/users', function(req, res){});
 
