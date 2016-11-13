@@ -25,3 +25,42 @@ h1 {
     display: inline-block;
     margin-top: 32px;
 }
+
+/* PAGE TITLE */
+
+h1.page-title {
+	font-size: 48px;
+	margin: 32px;
+}
+	h1.page-title img {
+		height: 48px
+	}
+
+/* NAVIGATION */
+
+nav.navigation-row {
+	border-bottom: 1px solid #474747;
+	color: #fff;
+	margin: 16px;
+}
+	
+	nav.navigation-row a {
+		display: inline-block;
+	    color: #88898c;
+	    font-size: 14px;
+	    letter-spacing: 1.1px;
+		line-height: 44px;
+	    padding: 0 16px;
+	    text-transform: uppercase;
+	    transition: color 0.2s;
+	}
+
+	nav.navigation-row a:hover {
+	    color: #ffffff;
+	    text-decoration: none;
+	}
+
+	nav.navigation-row a.active {
+	    color: #ffffff;
+		border-bottom: 2px solid #84bd00;
+	}
