@@ -68,3 +68,23 @@ nav.navigation-row {
 	    color: #ffffff;
 		border-bottom: 2px solid #84bd00;
 	}
+
+/* PLAYLISTS */
+
+.playlist-item {
+    border-bottom: 1px solid #474747;
+    padding: 4px 8px 4px;
+    margin: 0px 16px;
+}
+	.playlist-item:hover, .playlist-item.active {
+		background-color: rgba(255,255,255,.2);
+	}
+
+	.playlist-item div {
+	    display: inline-block;
+	    padding: 4px 12px;
+	}
+
+.margin {
+	margin: 16px;
+}
