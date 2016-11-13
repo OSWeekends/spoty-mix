@@ -120,7 +120,7 @@ app.get('/api/playlists', function(req, res){
 // PUT /api/playlists/:playlistId
 //   Add the playlist of the new temporal list
 app.post('/api/playlists', function(req, res){
-  if (!req.user && !!req.params.playlists && req.params.playlists.length>0){
+  if (!req.user && !!req.body.playlists && req.body.playlists.length>0){
     res.status(401).json({err:'Unauthorized', data: ''});
   }else {
     spotifyApi.setAccessToken(tokens[req.user.id]);
