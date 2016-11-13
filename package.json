@@ -51,6 +51,7 @@
     "method-override": "2.0.2",
     "passport": "0.3.2",
     "passport-spotify": "0.3.0",
+    "q": "^1.4.1",
     "spotify-web-api-node": "2.3.6"
   }
 }

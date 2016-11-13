@@ -133,7 +133,7 @@ app.controller('mixController', function(api, menu){
     $('nav a').removeClass('active');
     $('nav a:nth-child(2)').addClass('active');
 
-    api.get('/playlists', function(data, status) {
+    api.get('/api/playlists', function(data, status) {
         console.log(status);
         console.log(data);
         self.lists = data;

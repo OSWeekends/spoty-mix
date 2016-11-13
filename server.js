@@ -70,7 +70,10 @@ app.get('/', function(req, res){
 });
 
 app.get('/index', function(req, res){
-  res.render('index');
+  if (req.isAuthenticated()) { res.render('index'); }
+  else{
+    res.redirect('/');
+  }
 });
 
 app.get('/templates/home', function(req, res){
@@ -120,7 +123,6 @@ function writeUserData(id, data) {
 
     var calls = [];
     for (var i = 0; i < playlists.body.items.length; i++) {
-      console.log('name: playlists.body.items[i].name:', playlists.body.items[i].name)
       var p1 = Q.defer();
       var p2 = spotifyApi.getPlaylist(playlists.body.items[i].owner.id, playlists.body.items[i].id);
       var aux = Q.all([p1.promise, p2]);
@@ -131,8 +133,9 @@ function writeUserData(id, data) {
     Q.all(calls).then(function(data){
       for (var i = 0; i< data.length;i++){
         var tracks = [];
+
         for (var j=0; j<data[i][1].body.tracks.items.length; j++){
-          var aux = data[i][1].body.tracks.items[j];
+          var aux = data[i][1].body.tracks.items[j].track;
           tracks.push({
             duration_ms: aux.duration_ms,
             explicit: aux.explicit,
