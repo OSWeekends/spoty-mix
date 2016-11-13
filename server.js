@@ -80,7 +80,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(req, res){
   if(req.user){
-    writeUserData(req.user.id, req.user);
+    writeUserData(req.user.id, req.user._json)
     res.redirect('/index');
   }else {
     res.render('login');
