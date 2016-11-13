@@ -17,25 +17,15 @@ app.config(function($stateProvider, $urlRouterProvider) {
             url: "/mix",
             templateUrl: "/templates/mix",
             controller: 'mixController'
+        })
+        .state('playlist', {
+            url: "/playlist",
+            templateUrl: "/templates/playlist"
         });
 });
 
 
-app.controller('navController', function(menu){
-    var self = this;
-
-    console.log(menu.active);
-    self.menu = menu;
-    self.active = menu.active;
-    self.state = function() {
-        console.log($state.current.name);
-        return $state.current.name;
-    }
-
-});
-
-
-app.controller('userController', function(menu){
+app.controller('userController', function(){
     var self = this;
 
     self.friend = '';
@@ -56,10 +46,9 @@ app.controller('userController', function(menu){
 });
 
 
-app.controller('mixController', function(api, menu){
+app.controller('mixController', function(api){
     var self = this;
 
-    self.lists = [];
     self.items = [ {
     "collaborative": false,
     "external_urls": {
@@ -114,19 +103,31 @@ app.controller('mixController', function(api, menu){
     "uri": "spotify:user:wizzlersmate:playlist:1AVZz0mBuGbCEoNRQdYQju"
   } ];
 
+    self.list = function(playlistId) {
+        if($('#list-' + playlistId).hasClass('active')) {
+            self.removeList(playlistId);
+        } else {
+            self.addList(playlistId);
+        }
+    }
+
     self.addList = function(playlistId) {
-        api.put('/playlists/' + playlistId, function(data, status) {
+        $('#list-' + playlistId).addClass('active');
+        $('#list-' + playlistId + ' .icon-add').hide();
+        $('#list-' + playlistId + ' .icon-rem').show();
+        api.put('/api/playlists/' + playlistId, function(data, status) {
             console.log(status);
             console.log(data);
-            self.lists = data;
         });
     }
 
     self.removeList = function(playlistId) {
-        api.delete('/playlists/' + playlistId, function(data, status) {
+        $('#list-' + playlistId).removeClass('active');
+        $('#list-' + playlistId + ' .icon-add').show();
+        $('#list-' + playlistId + ' .icon-rem').hide();
+        api.delete('/api/playlists/' + playlistId, function(data, status) {
             console.log(status);
             console.log(data);
-            self.lists = data;
         });
     }
 
@@ -136,19 +137,11 @@ app.controller('mixController', function(api, menu){
     api.get('/api/playlists', function(data, status) {
         console.log(status);
         console.log(data);
-        self.lists = data;
+        self.items = data;
     });
 
 });
 
-
-app.factory("menu", function() {
-    var menu = {
-        active: 'user'
-    };
-
-    return menu;
-});
 
 app.factory("api", function($http) {
 
