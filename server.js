@@ -126,12 +126,27 @@ function writeUserData(id, data) {
 
     Q.all(calls).then(function(data){
       for (var i = 0; i< data.length;i++){
+        var tracks = [];
+        for (var j=0; j<data[i][1].body.tracks.items.length; j++){
+          var aux = data[i][1].body.tracks.items[j];
+          tracks.push({
+            duration_ms: aux.duration_ms,
+            explicit: aux.explicit,
+            external_urls: aux.external_urls,
+            href: aux.href,
+            id: aux.id,
+            name: aux.name,
+            popularity: aux.popularity,
+            preview_url: aux.preview_url,
+            uri: aux.uri
+          });
+        }
         firebase.database().ref('users/' + id + '/playlists').push({
           owner: data[i][0].owner.id,
           id: data[i][0].id,
           name: data[i][0].name,
           total: data[i][1].body.tracks.items.length,
-          tracks: data[i][1].body.tracks.items
+          tracks: tracks
         })
       }
     });
