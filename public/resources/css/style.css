@@ -17,6 +17,13 @@ h1 {
 	margin: 0;
 }
 
+	.login-screen .image-column {
+		margin-top: calc(50vh - 25vw);
+	}
+		.login-screen .image-column img {
+			max-width: 100%;
+		}
+
 	.login-screen .login-column {
 		margin-top: calc(50vh - 100px);
 	}
