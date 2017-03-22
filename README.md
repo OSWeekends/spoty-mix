@@ -2,7 +2,7 @@
 
 Simple super feature for Spotify Client.
 
-### How set-up the environment
+### How set-up the environment
 
 **Note**: You need have Bower installed in your system.
 
@@ -14,7 +14,7 @@ Simple super feature for Spotify Client.
   $ npm install && bower install
 ```
 
-### How serve project
+### How serve project
 
 ```
   $ npm start
