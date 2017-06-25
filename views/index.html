@@ -14,6 +14,7 @@
             <a href="/logout" class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">Salir</a>
         </nav>
 
+        <h1>[[= model.token]]</h1>
         <ui-view></ui-view>
 
         <script src="/node_modules/angular/angular.min.js"></script>
@@ -27,6 +28,5 @@
         <script src="/resources/js/controller/playlist.js"></script>
         
         <script src="/resources/js/service/api.js"></script>
-        
     </body>
 </html>

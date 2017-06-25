@@ -1,18 +1,17 @@
-var express = require('express'),
+const express = require('express'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
     methodOverride = require('method-override'),
     session = require('express-session'),
-    passport = require('passport'),
-    SpotifyStrategy = require('passport-spotify').Strategy,
-    firebase = require('firebase'),
-    config = require('./config'),
+    mongoose = require('mongoose'),
     engine = require('express-dot-engine'),
+    expressJwt = require('express-jwt'),
+    jwt = require('jsonwebtoken'),
+    config = require('./config/config'),
+    passport = require('passport'),
     loginController = require('./controllers/login');
 
-var tokens = {};
-
-firebase.initializeApp(config.firebase);
+mongoose.connect(config.mongo.url);
 
 var app = express();
 
@@ -24,72 +23,30 @@ app.set('view engine', 'html');
 app.use(cookieParser());
 app.use(bodyParser());
 app.use(methodOverride());
-app.use(session({ secret: 'keyboard cat' }));
+app.use(session({ secret: config.express.secret }));
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(express.static(__dirname + '/public'));
 
+// We are going to protect /api routes with JWT
+app.use('/api', expressJwt({
+    secret: config.express.secret
+}));
 
-app.get('/', function(req, res){
-  if(req.user){
-    tokens[req.user.id] = req.user.accessToken;
-    loginController.doLogin(req.user.id, req.user._json, req.user.accessToken);
-    res.redirect('/index');
-  }else {
-    res.render('login');
-  }
-});
-
-app.get('/index', function(req, res){
-  if (req.isAuthenticated()) { res.render('index'); }
-  else{
-    res.redirect('/');
-  }
+app.use('**', function(req, res, next) {
+    req.secret = config.express.secret;
+    next();
 });
 
-app.get('/templates/home', function(req, res){
-  res.render('templates/home');
-});
-app.get('/templates/mix', function(req, res){
-  res.render('templates/mix');
-});
-app.get('/templates/playlist', function(req, res){
-  res.render('templates/playlist');
-});
-
-// Middleware to load the tokens of spotify in the request for api
-app.use('/api/**', function(req, res, next){
-  req.tokens = tokens;
-  next();
-});
-
+var templatesRouter = require('./routes/templates');
+var rootRouter = require('./routes/root');
 var apiRuter = require('./routes/api');
+
+app.use('/templates', templatesRouter);
 app.use('/api', apiRuter);
+app.use('/', rootRouter);
 
-app.get('/auth/spotify',
-  passport.authenticate('spotify', {scope: ['playlist-modify', 'user-library-modify', 'playlist-read', 'playlist-modify-public', 'playlist-modify-private'], showDialog: true}),
-  function(req, res){
-});
+app.listen(config.express.port);
 
-app.get('/callback',
-  passport.authenticate('spotify', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/');
-});
-
-app.get('/logout', function(req, res){
-  req.logout();
-  res.redirect('/');
-});
-
-var port = 8080;
-
-app.listen(port);
-
-console.log('Listening on', port);
-
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login');
-}
+console.log('Listening on', config.express.port);

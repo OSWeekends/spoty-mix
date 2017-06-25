@@ -1,14 +1,11 @@
 var config = {
-    firebase: {
-        apiKey: "",
-        authDomain: "xxx.firebaseapp.com",
-        databaseURL: "https://xxx.firebaseio.com",
-        storageBucket: "xxx.appspot.com",
-        messagingSenderId: "xxx"
-    },
     spotify: {
-        clientID: "client_id",
-        clientSecret: "client_secret",
+        clientID: 'random',
+        clientSecret: 'random',
+    },
+    express: {
+        port: 8080,
+        secret: 'Big Cat'
     }
 };
 

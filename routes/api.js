@@ -3,9 +3,7 @@ var router = express.Router();
 var playlistController = require('../controllers/playlist');
 
 // Routes for /api
-
-router.post('/users', function(req, res){});
-
+router.post('/users', function(req, res) {});
 
 // GET /api/playlists
 //   Get the playlists of user for build the mix
@@ -17,6 +15,6 @@ router.post('/playlists', playlistController.mergePlaylists);
 
 // DELETE /api/playlists/:playlistId
 //   remove the playlist of the temporal list
-router.delete('/playlists/:playlistId', function(req, res){});
+router.delete('/playlists/:playlistId', function(req, res) {});
 
 module.exports = router;
